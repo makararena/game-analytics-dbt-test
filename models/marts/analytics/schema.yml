@@ -1,0 +1,90 @@
+version: 2
+
+models:
+  - name: daily_active_players
+    description: Daily active players by session date, platform, country, and difficulty; aggregated metrics.
+    columns:
+      - name: session_date
+        description: Date of the session.
+        tests:
+          - not_null
+      - name: platform
+        description: Platform (e.g. ps5, pc).
+      - name: country_code
+        description: Player country code.
+      - name: difficulty_selected
+        description: Player difficulty.
+      - name: active_players
+        description: Count of distinct players active on this date/segment.
+      - name: total_sessions
+        description: Total sessions in this segment.
+      - name: total_playtime_minutes
+        description: Sum of session durations.
+      - name: avg_sessions_per_player
+        description: Average sessions per active player.
+      - name: avg_playtime_minutes_per_player
+        description: Average playtime per active player.
+
+  - name: funnel_sessions
+    description: Funnel conversion metrics by session date, platform, country, and difficulty.
+    columns:
+      - name: session_date
+        description: Date of the session.
+        tests:
+          - not_null
+      - name: platform
+        description: Platform.
+      - name: country_code
+        description: Player country code.
+      - name: difficulty_selected
+        description: Player difficulty.
+      - name: total_sessions
+        description: Total sessions in segment.
+      - name: sessions_with_game_started
+        description: Sessions with at least one game_started event.
+      - name: sessions_with_chapter_started
+        description: Sessions with at least one chapter_started event.
+      - name: sessions_with_checkpoint_reached
+        description: Sessions with at least one checkpoint_reached event.
+      - name: sessions_with_chapter_completed
+        description: Sessions with at least one chapter_completed event.
+      - name: sessions_with_game_closed
+        description: Sessions with at least one game_closed event.
+      - name: game_started_rate_pct
+        description: Percentage of sessions with game started.
+      - name: chapter_started_rate_pct
+        description: Percentage of sessions with chapter started.
+      - name: checkpoint_reached_rate_pct
+        description: Percentage of sessions with checkpoint reached.
+      - name: chapter_completed_rate_pct
+        description: Percentage of sessions with chapter completed.
+      - name: game_closed_rate_pct
+        description: Percentage of sessions with game closed.
+      - name: avg_chapters_started
+        description: Average chapters started per session.
+      - name: avg_checkpoints_reached
+        description: Average checkpoints reached per session.
+      - name: avg_chapters_completed
+        description: Average chapters completed per session.
+      - name: avg_session_duration_minutes
+        description: Average session duration in minutes.
+
+  - name: retention
+    description: Cohort retention by cohort date, country, difficulty, and days since cohort.
+    columns:
+      - name: cohort_date
+        description: Date when the cohort was first seen.
+        tests:
+          - not_null
+      - name: country_code
+        description: Player country code.
+      - name: difficulty_selected
+        description: Player difficulty.
+      - name: days_since_cohort
+        description: Days since cohort date (0 = cohort day).
+      - name: active_players
+        description: Count of distinct players from cohort active on this day.
+      - name: cohort_size
+        description: Total players in this cohort.
+      - name: retention_rate_pct
+        description: active_players / cohort_size * 100.

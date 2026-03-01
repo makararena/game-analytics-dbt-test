@@ -1,0 +1,7 @@
+version: 2
+
+tests:
+  - name: sessions_no_overlap
+    config:
+      severity: error
+      store_failures: true

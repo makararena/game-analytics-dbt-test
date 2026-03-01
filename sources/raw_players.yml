@@ -1,0 +1,33 @@
+# Raw layer: players table (loaded by game-data-platform ingest).
+version: 2
+
+sources:
+  - name: raw
+    description: Raw game data loaded from CSVs (players, sessions, game events).
+    database: "{{ target.database }}"
+    schema: "{{ var('raw_schema', 'RAW') }}"
+    tables:
+      - name: raw_players
+        description: One row per player; id, first seen, locale, and selected difficulty.
+        columns:
+          - name: player_id
+            description: Unique player identifier (primary key).
+            tests:
+              - unique
+              - not_null
+          - name: first_seen_at
+            description: Timestamp when the player was first seen.
+          - name: country
+            description: Country code (e.g. BY, DE, ES).
+          - name: language
+            description: Language code (e.g. be, de, es).
+          - name: difficulty_selected
+            description: Player-selected difficulty level.
+            tests:
+              - accepted_values:
+                  arguments:
+                    values:
+                      - "easy"
+                      - "normal"
+                      - "hard"
+                      - "grounded"

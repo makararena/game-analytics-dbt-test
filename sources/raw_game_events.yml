@@ -1,0 +1,37 @@
+# Raw layer: game_events table (loaded by game-data-platform ingest).
+version: 2
+
+sources:
+  - name: raw
+    description: Raw game data loaded from CSVs (players, sessions, game events).
+    database: "{{ target.database }}"
+    schema: "{{ var('raw_schema', 'RAW') }}"
+    tables:
+      - name: raw_game_events
+        description: One row per game event; event type, time, player, platform, version, optional properties.
+        columns:
+          - name: event_id
+            description: Unique event identifier (primary key).
+            tests:
+              - unique
+              - not_null
+          - name: event_time
+            description: Event occurrence timestamp (string in raw).
+          - name: player_id
+            description: Player who generated the event.
+            tests:
+              - not_null
+          - name: event_name
+            description: Name of the event (e.g. game_started, chapter_started).
+          - name: platform
+            description: Platform where the event occurred.
+            tests:
+              - accepted_values:
+                  arguments:
+                    values:
+                      - "ps5"
+                      - "pc"
+          - name: game_version
+            description: Game version at time of event.
+          - name: properties
+            description: Optional JSON/VARIANT payload with event-specific attributes.

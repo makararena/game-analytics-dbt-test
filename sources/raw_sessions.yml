@@ -1,0 +1,33 @@
+# Raw layer: sessions table (loaded by game-data-platform ingest).
+version: 2
+
+sources:
+  - name: raw
+    description: Raw game data loaded from CSVs (players, sessions, game events).
+    database: "{{ target.database }}"
+    schema: "{{ var('raw_schema', 'RAW') }}"
+    tables:
+      - name: raw_sessions
+        description: One row per session; links to player, start/end times, platform.
+        columns:
+          - name: session_id
+            description: Unique session identifier (primary key).
+            tests:
+              - unique
+              - not_null
+          - name: player_id
+            description: Player who owns this session (foreign key to raw_players).
+            tests:
+              - not_null
+          - name: session_start
+            description: Session start timestamp (string in raw).
+          - name: session_end
+            description: Session end timestamp (string in raw).
+          - name: platform
+            description: Platform where the session was played.
+            tests:
+              - accepted_values:
+                  arguments:
+                    values:
+                      - "ps5"
+                      - "pc"
