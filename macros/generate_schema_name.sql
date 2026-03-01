@@ -4,7 +4,7 @@
 
     {# ---- CI ENV ---- #}
     {%- if target.name == 'ci' -%}
-§        {{ var('ci_schema', 'CI') }}
+        {{ var('ci_schema', 'CI') }}
 
     {# ---- NON-CI ENV ---- #}
     {%- else -%}
