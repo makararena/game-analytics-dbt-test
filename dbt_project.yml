@@ -12,7 +12,7 @@ vars:
   raw_schema: 'RAW'
   staging_schema: 'STAGING'
   marts_schema: 'MARTS'
-  ci_schema: 'CI' 
+  ci_schema: 'CI'
 
 # These configurations specify where dbt should look for different types of files.
 # The `model-paths` config, for example, states that models in this project can be

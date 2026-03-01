@@ -1,15 +1,41 @@
-Welcome to your new dbt project!
+# game_analytics_dbt
 
-### Using the starter project
+This project contains dbt transformations for game analytics.
 
-Try running the following commands:
-- dbt run
-- dbt test
+## Layers
 
+- `sources/` — descriptions for `raw_players`, `raw_sessions`, `raw_game_events`.
+- `models/staging/` — cleaning and normalizing raw data.
+- `models/marts/core/` — fact/dimension models for analytics.
+- `models/marts/analytics/` — aggregates for reporting.
+- `tests/` — singular tests.
+- `macros/` — macros (including `generate_schema_name`).
 
-### Resources:
-- Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
-- Check out [Discourse](https://discourse.getdbt.com/) for commonly asked questions and answers
-- Join the [chat](https://community.getdbt.com/) on Slack for live discussions and support
-- Find [dbt events](https://events.getdbt.com) near you
-- Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
+## Main commands
+
+```bash
+dbt parse
+dbt run --select staging
+dbt run --select marts
+dbt test
+dbt build
+```
+
+## Schemas
+
+Managed via `dbt_project.yml` vars:
+- `raw_schema`
+- `staging_schema`
+- `marts_schema`
+- `ci_schema`
+
+The `generate_schema_name` macro routes models by environment (including the `ci` target).
+
+## CI
+
+GitHub Actions runs:
+- `dbt deps`
+- `dbt compile --target ci`
+- `dbt build --target ci`
+
+Goal: prevent changes that break models or tests from reaching `main`.
