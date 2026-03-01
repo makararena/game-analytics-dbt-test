@@ -1,4 +1,4 @@
--- Singular test: returns rows where the same player has two sessions with overlapping time.
+-- Singular test: returns rows where the same player has two sessions with overlapping time
 -- The test fails if any rows are returned.
 -- Overlap: [s1_start, s1_end] and [s2_start, s2_end] overlap when s1_start < s2_end AND s1_end > s2_start.
 
