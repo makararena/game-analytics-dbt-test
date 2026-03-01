@@ -29,5 +29,6 @@ sources:
               - accepted_values:
                   arguments:
                     values:
-                      - "ps5"
+                      - "ps3"
+                      - "xbox360"
                       - "pc"
