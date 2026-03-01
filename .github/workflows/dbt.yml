@@ -1,38 +1,40 @@
 name: dbt
 
 on:
-   push:
-      branches: [main]
-   pull_request:
-      branches: [main]
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-   dbt-compile:
-      runs-on: ubuntu-latest
-      steps:
-         - name: Checkout repository
-            uses: actions/checkout@v4
+  dbt:
+    runs-on: ubuntu-latest
 
-         - name: Set up Python
-            uses: actions/setup-python@v5
-            with:
-               python-version: "3.11"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-         - name: Install dbt-snowflake
-            run: pip install dbt-snowflake
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-         - name: dbt deps
-            run: dbt deps
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install dbt-snowflake
 
-         - name: Generate profiles.yml from Secrets
-            run: |
-               mkdir -p ~/.dbt
-               printf '%s' "$PROFILE_CONTENT" > ~/.dbt/profiles.yml
-            env:
-               PROFILE_CONTENT: ${{ secrets.SNOWFLAKE_CI_PROFILE }}
+      - name: Generate profiles.yml from secret
+        run: |
+          mkdir -p ~/.dbt
+          printf "%s" "$PROFILE_CONTENT" > ~/.dbt/profiles.yml
+        env:
+          PROFILE_CONTENT: ${{ secrets.SNOWFLAKE_CI_PROFILE }}
 
-         - name: dbt compile (CI)
-            run: dbt compile --target ci
+      - name: dbt deps
+        run: dbt deps
 
-         - name: dbt build (run + test — catches broken contracts)
-            run: dbt build --target ci
+      - name: dbt build (CI)
+        run: dbt build --target ci
