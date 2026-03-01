@@ -1,7 +1,21 @@
-{{ config(materialized='table') }}
+{{ config(
+    materialized='incremental',
+    unique_key='event_id',
+    on_schema_change='ignore'
+) }}
 
 with events as (
-    select * from {{ ref('stg_game_events') }}
+
+    select *
+    from {{ ref('stg_game_events') }}
+
+    {% if is_incremental() %}
+        where event_at > (
+            select coalesce(max(event_at), '1900-01-01'::timestamp)
+            from {{ this }}
+        )
+    {% endif %}
+
 ),
 
 sessions as (
@@ -63,11 +77,13 @@ final as (
         p.language_code,
         p.difficulty_selected,
         case
-            when e.session_id is not null then datediff('second', e.session_start_at, e.event_at)
+            when e.session_id is not null
+                then datediff('second', e.session_start_at, e.event_at)
             else null
         end as seconds_since_session_start
     from events_with_one_session e
-    left join players p on e.player_id = p.player_id
+    left join players p
+        on e.player_id = p.player_id
 )
 
 select * from final

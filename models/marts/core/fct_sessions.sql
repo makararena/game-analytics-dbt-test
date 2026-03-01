@@ -1,7 +1,21 @@
-{{ config(materialized='table') }}
+{{ config(
+    materialized='incremental',
+    unique_key='session_id',
+    on_schema_change='ignore'
+) }}
 
 with sessions as (
-    select * from {{ ref('stg_sessions') }}
+
+    select *
+    from {{ ref('stg_sessions') }}
+
+    {% if is_incremental() %}
+        where session_start_at > (
+            select coalesce(max(session_start_at), '1900-01-01'::timestamp)
+            from {{ this }}
+        )
+    {% endif %}
+
 ),
 
 players as (
@@ -15,7 +29,7 @@ events_matched as (
         e.event_id,
         e.event_at,
         e.event_name
-    from {{ ref('stg_sessions') }} s
+    from sessions s
     inner join {{ ref('stg_game_events') }} e
         on e.player_id = s.player_id
         and e.event_at >= s.session_start_at
@@ -50,12 +64,15 @@ final as (
         e.first_event_at,
         e.last_event_at,
         case
-            when s.session_duration_minutes > 0 then coalesce(e.total_events, 0)::float / s.session_duration_minutes
+            when s.session_duration_minutes > 0
+                then coalesce(e.total_events, 0)::float / s.session_duration_minutes
             else 0
         end as events_per_minute
     from sessions s
-    left join players p on s.player_id = p.player_id
-    left join events_agg e on s.session_id = e.session_id
+    left join players p
+        on s.player_id = p.player_id
+    left join events_agg e
+        on s.session_id = e.session_id
 )
 
 select * from final
