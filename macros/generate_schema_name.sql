@@ -4,15 +4,9 @@
 
     {# ---- CI ENV ---- #}
     {%- if target.name == 'ci' -%}
+§        {{ var('ci_schema', 'CI') }}
 
-        {%- if custom_schema_name is none -%}
-            {{ base_schema }}
-        {%- else -%}
-            {{ base_schema }}_{{ custom_schema_name | trim | upper }}
-        {%- endif -%}
-
-    {# ---- NON-CI ENV ----- #}
-
+    {# ---- NON-CI ENV ---- #}
     {%- else -%}
 
         {%- if custom_schema_name is none -%}
